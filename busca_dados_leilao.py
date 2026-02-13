@@ -10,17 +10,12 @@ from motor import MotorRegrasSimulacao
 from sqlalchemy import create_engine, text
 
 
-# ================= CONFIG VIA ENV =================
 
 TOKEN_API_FIXO = os.getenv("TOKEN_API_FIXO")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True
-)
+engine = create_engine(DATABASE_URL,pool_pre_ping=True)
 
-# ==================================================
 
 
 def formatar_data_api(dt):
@@ -40,7 +35,11 @@ def obter_data_inicio():
 
     return formatar_data_api(datetime.now())
 
+def salvar_data_inicio(data):
 
+    with open(ARQUIVO_CONTROLE, "w") as f:
+        f.write(data)
+    
 def buscar_solicitacoes_trabalhador(token_api, data_hora_inicio, data_hora_fim, delay=1, max_tentativas=5):
 
     url = "https://monbank.co/api/dataprev/propostas/solicitacoes-trabalhador"
@@ -173,11 +172,7 @@ def executar():
 
     print(f"Buscando de {data_inicio} até {data_fim}")
 
-    dados = buscar_solicitacoes_trabalhador(
-        token_api=TOKEN_API_FIXO,
-        data_hora_inicio=data_inicio,
-        data_hora_fim=data_fim
-    )
+    dados = buscar_solicitacoes_trabalhador(token_api=TOKEN_API_FIXO,data_hora_inicio=data_inicio,data_hora_fim=data_fim)
 
     if not dados:
         print("Nenhum dado encontrado.")
@@ -191,6 +186,7 @@ def executar():
     salvar_no_postgres(df)
 
     print(f"{len(df)} registros processados.")
+    salvar_data_inicio(data_fim)
 
 
 if __name__ == "__main__":
