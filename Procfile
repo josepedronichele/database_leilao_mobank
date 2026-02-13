@@ -1,0 +1,1 @@
+worker: python busca_dados_leilao.py
