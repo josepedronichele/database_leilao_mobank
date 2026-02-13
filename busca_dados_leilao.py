@@ -163,7 +163,7 @@ def salvar_no_postgres(df):
 
 
 def executar():
-    ARQUIVO_CONTROLE = "ultima_data_execucao.txt"
+    
 
     data_inicio = obter_data_inicio()
     data_fim = formatar_data_api(datetime.now())
@@ -188,9 +188,8 @@ def executar():
 
 
 if __name__ == "__main__":
-
     print("Worker iniciado...")
-
+    ARQUIVO_CONTROLE = "ultima_data_execucao.txt"
     while True:
         try:
             executar()
