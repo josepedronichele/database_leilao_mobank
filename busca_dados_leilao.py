@@ -106,6 +106,9 @@ def salvar_no_postgres(df):
     fuso = pytz.timezone("America/Sao_Paulo")
     df["hora_atualizacao"] = datetime.now(fuso)
 
+    # 🔹 NOVA COLUNA
+    df["verificacao_disparo"] = False
+
     registros = df.to_dict(orient="records")
 
     sql = """
@@ -129,7 +132,8 @@ def salvar_no_postgres(df):
         regra_tempo_empresa,
         regra_pep,
         aprovado_final,
-        hora_atualizacao
+        hora_atualizacao,
+        verificacao_disparo
     )
     VALUES (
         :idSolicitacao,
@@ -151,7 +155,8 @@ def salvar_no_postgres(df):
         :regra_tempo_empresa,
         :regra_pep,
         :aprovado_final,
-        :hora_atualizacao
+        :hora_atualizacao,
+        :verificacao_disparo
     )
     ON CONFLICT (idSolicitacao) DO NOTHING;
     """
