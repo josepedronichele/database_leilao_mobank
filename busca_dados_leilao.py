@@ -21,17 +21,14 @@ engine = create_engine(DATABASE_URL,pool_pre_ping=True)
 def formatar_data_api(dt):
     return dt.strftime("%d%m%Y%H%M%S")
 
-
 def obter_data_inicio():
-    with engine.connect() as conn:
-        result = conn.execute(text("""
-            SELECT MAX(dataHoraValidadeSolicitacao)
-            FROM dataprev_solicitacoes
-        """))
-        ultima = result.scalar()
 
-    if ultima:
-        return ultima
+    if os.path.exists(ARQUIVO_CONTROLE):
+        with open(ARQUIVO_CONTROLE, "r") as f:
+            ultima_data = f.read().strip()
+
+            if ultima_data:
+                return ultima_data
 
     return formatar_data_api(datetime.now())
 
@@ -166,6 +163,7 @@ def salvar_no_postgres(df):
 
 
 def executar():
+    ARQUIVO_CONTROLE = "ultima_data_execucao.txt"
 
     data_inicio = obter_data_inicio()
     data_fim = formatar_data_api(datetime.now())
